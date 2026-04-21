@@ -12,22 +12,40 @@ First and foremost you'll need to download [Ollama](https://www.ollama.com/downl
 
 Secondly, I used a virtual environment on this project.  The .venv folder is located outside of the 'my-assistant' folder.  It is not in the git repo.  Oki?
 
+
+To make your own virtual folder.  You should probably google this for some R&D if you aren't aware of how to do this or why.
 ```powershell
 python -m venv .venv
 ```
 
-On my laptop, I used python 3.12.10 for this project.  It caused some module import resolution issues, but I figured them out, thus the usage a settings.json file in the .vsCode folder.  The settings.json file points to my local installation of python 3.12.10.
+On my laptop, I used python 3.12.10 for this project. I chose to do this to simulate an environment where the app has to be coded for a specific version of python; as opposed to the latest version. It caused some module import resolution issues, but I figured them out, thus the usage a settings.json file in the .vsCode folder.  The settings.json file points to my local installation of python 3.12.10.
 
 You could try using a different version though. Or install python 3.12.10 and run the command this way:
-
 ```powershell
 python 3.12.10 -m venv .venv
 ```
 
+Now you have to activate your virtual environment before installing the modules in '\my-assistant\requirements.txt'. Before running this command make sure to be in the correct root folder!
+```powershell
+.venv\Scripts\activate
+```
+
+Go into the subroot folder and install the modules this way.
+```powershell
+cd my-assistant
+pip install -r requirements.txt
+```
+
+Once that is finished, try running the app.
+```powershell
+python  -m uvicorn server:app --reload
+```
 
 
+<br/><br/>
 ## Usage
 While in the /my-assistant folder, you can do these things:
+
 
 ### chat
 Chat with Ollama locally.
@@ -36,7 +54,7 @@ python chat.py
 ```
 
 ### ingest
-Ingest documents of .txt of .pdf formats, from the /data folder >> into the /db/chroma.sqlite3 database.
+Ingest documents of .txt of .pdf formats, from the 'my-assistant/data' folder >> into the /db/chroma.sqlite3 database. The script is setup to keep track of what was ingested via the 'ingested.json' file.  Just drop the files into the 'data' folder and run the script.  The script code should be fairly easy to read.  If you can't read it well, you probably should learn to code more before tackling something like this; -(or learn by trial & error?)
 
 ```powershell
 python ingest.py
