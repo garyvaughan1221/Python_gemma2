@@ -18,7 +18,7 @@ To make your own virtual folder.  You should probably google this for some R&D i
 python -m venv .venv
 ```
 
-On my laptop, I used python 3.12.10 for this project. I chose to do this to simulate an environment where the app has to be coded for a specific version of python; as opposed to the latest version. It caused some module import resolution issues, but I figured them out, thus the usage a settings.json file in the .vsCode folder.  The settings.json file points to my local installation of python 3.12.10.
+ALTERNATIVELY, On my laptop, I used python 3.12.10 for this project. I chose to do this to simulate an environment where the app has to be coded for a specific version of python; as opposed to the latest version. It caused some module import resolution issues, but I figured them out, thus the usage a settings.json file in the .vsCode folder.  The settings.json file points to my local installation of python 3.12.10.
 
 You could try using a different version though. Or install python 3.12.10 and run the command this way:
 ```powershell

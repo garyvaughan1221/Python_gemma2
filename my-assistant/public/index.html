@@ -374,38 +374,58 @@
   }
 
   async function sendQuestion() {
-    const input = document.getElementById("question");
-    const btn   = document.getElementById("send-btn");
-    const bar = document.getElementById("loading-bar");
-    const q     = input.value.trim();
-    if (!q) return;
+      const input = document.getElementById("question");
+      const btn = document.getElementById("send-btn");
+      const bar = document.getElementById("loading-bar");
+      const q = input.value.trim();
+      if (!q) return;
 
-    addMessage("user", q);
-    input.value = "";
-    btn.disabled = true;
-    btn.textContent = "Thinking...";
-    bar.style.display = "block";
-    addTyping();
+      addMessage("user", q);
+      input.value = "";
+      btn.disabled = true;
+      btn.textContent = "Thinking...";
+      bar.style.display = "block";
 
-    try {
-      const res = await fetch(API, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ question: q })
-      });
-      const data = await res.json();
-      removeTyping();
-      addMessage("ai", data.answer.replace(/\n/g, "<br/>"));
-    } catch (err) {
-      removeTyping();
-      addMessage("ai", "⚠️ Could not reach the local server. Make sure Ollama and the FastAPI server are running.");
-    } finally {
-      btn.disabled = false;
-      btn.textContent = "Ask ➜";
-      bar.style.display = "none";
-      input.focus();
+      // Add an empty AI bubble to stream into
+      const win = document.getElementById("chat-window");
+      const div = document.createElement("div");
+      div.className = "msg ai";
+      div.innerHTML = `
+      <div class="msg-avatar">⚖️</div>
+      <div class="msg-bubble" id="stream-target"></div>
+    `;
+      win.appendChild(div);
+      win.scrollTop = win.scrollHeight;
+
+      try {
+        const res = await fetch("/ask-stream", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ question: q })
+        });
+
+        const reader = res.body.getReader();
+        const decoder = new TextDecoder();
+        const target = document.getElementById("stream-target");
+
+        while (true) {
+          const { done, value } = await reader.read();
+          if (done) break;
+          const text = decoder.decode(value, { stream: true });
+          target.innerHTML += text.replace(/\n/g, "<br/>");
+          win.scrollTop = win.scrollHeight;
+        }
+
+      } catch (err) {
+        document.getElementById("stream-target").innerHTML =
+          "⚠️ Could not reach the local server. Make sure Ollama and the FastAPI server are running.";
+      } finally {
+        btn.disabled = false;
+        btn.textContent = "Ask ➜";
+        bar.style.display = "none";
+        input.focus();
+      }
     }
-  }
 </script>
 
 </body>
