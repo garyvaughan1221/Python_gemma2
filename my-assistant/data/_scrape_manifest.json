@@ -1,0 +1,19 @@
+{
+  "success": [
+    "pcc_8.72_noise_disturbance",
+    "pcc_8.76_noise_pollution",
+    "pcc_18a.15_density_setbacks",
+    "pcc_18a.37_adu",
+    "pcc_17c.30_building_codes",
+    "pcc_6.02_animals",
+    "pcc_8.12_civil_disturbance",
+    "rcw_59.12_unlawful_detainer",
+    "rcw_19.27_building_code",
+    "rcw_70.107_noise_control",
+    "rcw_36.70a_growth_mgmt"
+  ],
+  "failed": [
+    "pcc_permits_homeowner_guide",
+    "pcc_permits_when_required"
+  ]
+}
