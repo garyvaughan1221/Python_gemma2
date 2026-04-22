@@ -9,5 +9,9 @@ wheels/
 # Virtual environments
 .venv
 venv
+.env
+
+
+
 
 Python_gemma2.code-workspace
