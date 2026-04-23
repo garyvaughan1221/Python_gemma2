@@ -1,43 +1,65 @@
-from fastapi import FastAPI
-from fastapi.staticfiles import StaticFiles
+from dotenv import load_dotenv
+load_dotenv()
+
+import os
+from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import RedirectResponse, StreamingResponse
+from fastapi.responses import FileResponse, RedirectResponse
+from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
-from chat import ask, ask_stream
 
-app = FastAPI()
+from chat import query
 
+# ── App ───────────────────────────────────────────────────────────────────────
+app = FastAPI(title="Pierce County AI Assistant")
+
+# CORS — tighten allowed_origins to your Firebase domain in production
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
-    allow_methods=["*"],
+    allow_methods=["GET", "POST"],
     allow_headers=["*"],
 )
 
-app.mount("/public", StaticFiles(directory="public"), name="public")
+# Serve static files (index.html + any assets) from /public
+PUBLIC_DIR = os.path.join(os.path.dirname(__file__), "public")
+if os.path.isdir(PUBLIC_DIR):
+    app.mount("/public", StaticFiles(directory=PUBLIC_DIR), name="static")
 
-class Question(BaseModel):
+
+# ── Routes ────────────────────────────────────────────────────────────────────
+@app.get("/", include_in_schema=False)
+def root():
+    index = os.path.join(PUBLIC_DIR, "index.html")
+    if os.path.exists(index):
+        return FileResponse(index)
+    return RedirectResponse(url="/docs")
+
+
+@app.get("/health")
+def health():
+    """Cloud Run health check endpoint."""
+    return {"status": "ok"}
+
+
+class QueryRequest(BaseModel):
     question: str
 
-@app.get("/")
-def root():
-    return RedirectResponse(url="/public/index.html")
+
+class QueryResponse(BaseModel):
+    answer: str
+    sources: list[dict]
 
 
-# Probably not needed anymore...
-@app.post("/ask")
-def ask_question(body: Question):
-    answer = ask(body.question)
-    return {"answer": answer}
+@app.post("/ask", response_model=QueryResponse)
+def ask(req: QueryRequest):
+    if not req.question.strip():
+        raise HTTPException(status_code=400, detail="Question cannot be empty.")
+    result = query(req.question)
+    return QueryResponse(**result)
 
 
-# Streaming endpoint for real-time responses.  This allows the client to receive partial answers as they are generated.
-# The client can use this to display a loading indicator or show the answer as it comes in, improving the user experience.
-# The ask_stream function is a generator that yields parts of the answer as they are generated.  The StreamingResponse will send these parts to the client as they are received, allowing for a more interactive experience.
-# Called by HTTP_POST '/ask-stream' (in index.html) with a JSON body containing the question.  The response is a stream of text that can be consumed by the client in real-time.
-@app.post("/ask-stream")
-def ask_stream_endpoint(body: Question):
-    return StreamingResponse(
-        ask_stream(body.question),
-        media_type="text/plain"
-    )
+# ── Local dev entry point ─────────────────────────────────────────────────────
+if __name__ == "__main__":
+    import uvicorn
+    uvicorn.run("server:app", host="0.0.0.0", port=8000, reload=True)

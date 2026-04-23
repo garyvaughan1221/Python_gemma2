@@ -1,3 +1,13 @@
-[
-  "pierce_county_code.pdf"
-]
+{
+  "data\\pcc_17c.30_building_codes.txt": "396e0f463b6ac2a49a8355700bda05645326190fe6939ee0dc91f866cd45ea6f",
+  "data\\pcc_18a.15_density_setbacks.txt": "63faf2b524841261b4748ecf05f515c7ded4e6738ae973f9e62a658f2dea9f8e",
+  "data\\pcc_18a.37_adu.txt": "aea29955073db80e99bb7a83070bcc9c3a196fb656f4bc71d4f37b2be4b17180",
+  "data\\pcc_6.02_animals.txt": "d27707543e5ed13b499e9576600562de500d437cd2f097172d6daf6ec46ac3ba",
+  "data\\pcc_8.12_civil_disturbance.txt": "c395bea5359c78124c3655f20ca8fcd814efd042501aed8c07db037bec4fab11",
+  "data\\pcc_8.72_noise_disturbance.txt": "7af6340096b3d4d19dee049879def8bc3ea77bae0960e97c4576ba8c8616ad9b",
+  "data\\pcc_8.76_noise_pollution.txt": "48647836a4e0f6ced6a99f77221625477d44cec59ac3b8da7ffec5be2f99adc7",
+  "data\\pierce_county_code.pdf": "b261534e1db6132104750ac7f115e5d107648b52e9777a6ac40573cead0213e8",
+  "data\\rcw_19.27_building_code.txt": "1f1be5c02cec95b4da0f4239cc07721a710dc21ccf325e5cc9445d45632e3236",
+  "data\\rcw_59.12_unlawful_detainer.txt": "7cff8be3c77d1c63c2ad21f12a1fba56ab8d180289dd94fefbbd4322ca4df81f",
+  "data\\rcw_70.107_noise_control.txt": "56dca1f3c6626eff4f425ea24fe04666bf350bf6028e9f41f48934678b34ef31"
+}

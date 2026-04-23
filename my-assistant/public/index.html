@@ -1,24 +1,33 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Pierce County Legal & DIY Assistant</title>
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Source+Sans+3:wght@300;400;600&display=swap" rel="stylesheet"/>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Source+Sans+3:wght@300;400;600&display=swap"
+    rel="stylesheet" />
   <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
 
     :root {
-      --navy:    #0f2340;
-      --navy2:   #1a3a5c;
-      --gold:    #c9a84c;
-      --gold2:   #e8c96a;
-      --cream:   #f5f0e8;
-      --cream2:  #ede6d6;
-      --ink:     #1c1c1c;
-      --muted:   #6b7280;
-      --white:   #ffffff;
-      --radius:  6px;
+      --navy: #0f2340;
+      --navy2: #1a3a5c;
+      --gold: #c9a84c;
+      --gold2: #e8c96a;
+      --cream: #f5f0e8;
+      --cream2: #ede6d6;
+      --ink: #1c1c1c;
+      --muted: #6b7280;
+      --white: #ffffff;
+      --radius: 6px;
     }
 
     body {
@@ -87,7 +96,7 @@
       display: flex;
       flex-direction: column;
       gap: 1rem;
-      box-shadow: 0 2px 12px rgba(15,35,64,0.07);
+      box-shadow: 0 2px 12px rgba(15, 35, 64, 0.07);
     }
 
     #chat-window:empty::before {
@@ -111,8 +120,15 @@
     }
 
     @keyframes fadeSlide {
-      from { opacity: 0; transform: translateY(6px); }
-      to   { opacity: 1; transform: translateY(0); }
+      from {
+        opacity: 0;
+        transform: translateY(6px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
     }
 
     .msg-avatar {
@@ -127,8 +143,15 @@
       margin-top: 2px;
     }
 
-    .msg.user .msg-avatar  { background: var(--navy2); color: var(--gold2); }
-    .msg.ai   .msg-avatar  { background: var(--gold);  color: var(--navy);  }
+    .msg.user .msg-avatar {
+      background: var(--navy2);
+      color: var(--gold2);
+    }
+
+    .msg.ai .msg-avatar {
+      background: var(--gold);
+      color: var(--navy);
+    }
 
     .msg-bubble {
       padding: 0.7rem 1rem;
@@ -151,24 +174,45 @@
       border-bottom-left-radius: 2px;
     }
 
-    .msg.user { flex-direction: row-reverse; }
-    .msg.user .msg-bubble { border-bottom-left-radius: var(--radius); border-bottom-right-radius: 2px; }
+    .msg.user {
+      flex-direction: row-reverse;
+    }
+
+    .msg.user .msg-bubble {
+      border-bottom-left-radius: var(--radius);
+      border-bottom-right-radius: 2px;
+    }
 
     /* typing indicator */
     .typing-dots span {
       display: inline-block;
-      width: 7px; height: 7px;
+      width: 7px;
+      height: 7px;
       background: var(--muted);
       border-radius: 50%;
       margin: 0 2px;
       animation: bounce 1.2s infinite ease-in-out;
     }
-    .typing-dots span:nth-child(2) { animation-delay: 0.2s; }
-    .typing-dots span:nth-child(3) { animation-delay: 0.4s; }
+
+    .typing-dots span:nth-child(2) {
+      animation-delay: 0.2s;
+    }
+
+    .typing-dots span:nth-child(3) {
+      animation-delay: 0.4s;
+    }
 
     @keyframes bounce {
-      0%, 80%, 100% { transform: translateY(0); }
-      40%           { transform: translateY(-6px); }
+
+      0%,
+      80%,
+      100% {
+        transform: translateY(0);
+      }
+
+      40% {
+        transform: translateY(-6px);
+      }
     }
 
     /* ── DISCLAIMER BANNER ── */
@@ -231,10 +275,12 @@
       line-height: 1.5;
       transition: border-color 0.15s;
       outline: none;
-      box-shadow: 0 1px 4px rgba(15,35,64,0.06);
+      box-shadow: 0 1px 4px rgba(15, 35, 64, 0.06);
     }
 
-    textarea:focus { border-color: var(--navy2); }
+    textarea:focus {
+      border-color: var(--navy2);
+    }
 
     button#send-btn {
       background: var(--navy);
@@ -255,8 +301,23 @@
       white-space: nowrap;
     }
 
-    button#send-btn:hover   { background: var(--navy2); }
-    button#send-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+    button#send-btn:hover {
+      background: var(--navy2);
+    }
+
+    button#send-btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    /* sources strip */
+    .sources {
+      font-size: 0.75rem;
+      color: var(--muted);
+      margin-top: 0.4rem;
+      padding-top: 0.4rem;
+      border-top: 1px solid var(--cream2);
+    }
 
     /* ── FOOTER ── */
     footer {
@@ -278,102 +339,114 @@
     }
 
     @keyframes shimmer {
-      0%   { background-position: 200% 0; }
-      100% { background-position: -200% 0; }
+      0% {
+        background-position: 200% 0;
+      }
+
+      100% {
+        background-position: -200% 0;
+      }
     }
   </style>
 </head>
+
 <body>
 
-<header>
-  <div class="header-icon">⚖️</div>
-  <div class="header-text">
-    <h1>Pierce County Legal &amp; DIY Assistant</h1>
-    <p>Powered by Gemma 2 · Local RAG · Not legal advice</p>
-  </div>
-</header>
+  <header>
+    <div class="header-icon">⚖️</div>
+    <div class="header-text">
+      <h1>Pierce County Legal &amp; DIY Assistant</h1>
+      <p>Powered by Gemini 2.5 Flash · Local RAG · Not legal advice</p>
+    </div>
+  </header>
 
-<main>
-  <div class="disclaimer">
-    ⚠️ <span>This assistant provides general information only. Always consult a licensed attorney for legal advice specific to your situation.</span>
-  </div>
+  <main>
+    <div class="disclaimer">
+      ⚠️ <span>This assistant provides general information only. Always consult a licensed attorney for legal advice
+        specific to your situation.</span>
+    </div>
 
-  <div id="chat-window"></div>
+    <div id="chat-window"></div>
 
-  <div id="loading-bar"></div>
+    <div id="loading-bar"></div>
 
-  <div class="quick-prompts">
-    <button onclick="fillPrompt('What are the ADU rules in Pierce County?')">ADU rules</button>
-    <button onclick="fillPrompt('Do I need a permit to build a deck?')">Deck permit?</button>
-    <button onclick="fillPrompt('What are the noise ordinance hours?')">Noise ordinance</button>
-    <button onclick="fillPrompt('How long does a landlord have to return my deposit?')">Security deposit</button>
-    <button onclick="fillPrompt('How tall can my fence be?')">Fence height</button>
-  </div>
+    <div class="quick-prompts">
+      <button onclick="fillPrompt('What are the ADU rules in Pierce County?')">ADU rules</button>
+      <button onclick="fillPrompt('Do I need a permit to build a deck?')">Deck permit?</button>
+      <button onclick="fillPrompt('What are the noise ordinance hours?')">Noise ordinance</button>
+      <button onclick="fillPrompt('How long does a landlord have to return my deposit?')">Security deposit</button>
+      <button onclick="fillPrompt('How tall can my fence be?')">Fence height</button>
+    </div>
 
-  <div class="input-row">
-    <textarea
-      id="question"
-      placeholder="Ask about Pierce County code, WA State law, or a DIY project..."
-      rows="2"
-      onkeydown="handleKey(event)"
-    ></textarea>
-    <button id="send-btn" onclick="sendQuestion()">
-      Ask ➜
-    </button>
-  </div>
-</main>
+    <div class="input-row">
+      <textarea id="question" placeholder="Ask about Pierce County code, WA State law, or a DIY project..." rows="2"
+        onkeydown="handleKey(event)"></textarea>
+      <button id="send-btn" onclick="sendQuestion()">
+        Ask ➜
+      </button>
+    </div>
+  </main>
 
-<footer>Running locally · Gemma 2 2B via Ollama · Pierce County + WA State data</footer>
+  <footer>Running locally · Gemini 2.5 Flash · Pierce County + WA State data</footer>
 
-<script>
-  const API = "http://localhost:8000/ask";
-
-  function handleKey(e) {
-    if (e.key === "Enter" && !e.shiftKey) {
-      e.preventDefault();
-      sendQuestion();
+  <script>
+    function handleKey(e) {
+      if (e.key === "Enter" && !e.shiftKey) {
+        e.preventDefault();
+        sendQuestion();
+      }
     }
-  }
 
-  function fillPrompt(text) {
-    document.getElementById("question").value = text;
-    document.getElementById("question").focus();
-  }
+    function fillPrompt(text) {
+      document.getElementById("question").value = text;
+      document.getElementById("question").focus();
+    }
 
-  function addMessage(role, content) {
-    const win = document.getElementById("chat-window");
-    const div = document.createElement("div");
-    div.className = `msg ${role}`;
-    div.innerHTML = `
+    function addMessage(role, content, sources = []) {
+      const win = document.getElementById("chat-window");
+      const div = document.createElement("div");
+      div.className = `msg ${role}`;
+
+      // Build sources strip if present
+      let sourcesHtml = "";
+      if (sources.length > 0) {
+        const unique = [...new Set(sources.map(s => `${s.source} (p.${s.page + 1})`))];
+        sourcesHtml = `<div class="sources">📄 Sources: ${unique.join(" · ")}</div>`;
+      }
+
+      div.innerHTML = `
       <div class="msg-avatar">${role === "user" ? "👤" : "⚖️"}</div>
-      <div class="msg-bubble">${content}</div>
+      <div class="msg-bubble">
+        ${content}
+        ${sourcesHtml}
+      </div>
     `;
-    win.appendChild(div);
-    win.scrollTop = win.scrollHeight;
-    return div;
-  }
+      win.appendChild(div);
+      win.scrollTop = win.scrollHeight;
+      return div;
+    }
 
-  function addTyping() {
-    const win = document.getElementById("chat-window");
-    const div = document.createElement("div");
-    div.className = "msg ai";
-    div.id = "typing";
-    div.innerHTML = `
+    function addTyping() {
+      const win = document.getElementById("chat-window");
+      const div = document.createElement("div");
+      div.className = "msg ai";
+      div.id = "typing";
+      div.innerHTML = `
       <div class="msg-avatar">⚖️</div>
       <div class="msg-bubble">
         <div class="typing-dots"><span></span><span></span><span></span></div>
       </div>
     `;
-    win.appendChild(div);
-    win.scrollTop = win.scrollHeight;
-  }
+      win.appendChild(div);
+      win.scrollTop = win.scrollHeight;
+    }
 
-  function removeTyping() {
-    const t = document.getElementById("typing");
-    if (t) t.remove();
-  }
+    function removeTyping() {
+      const t = document.getElementById("typing");
+      if (t) t.remove();
+    }
 
-  async function sendQuestion() {
+    async function sendQuestion() {
       const input = document.getElementById("question");
       const btn = document.getElementById("send-btn");
       const bar = document.getElementById("loading-bar");
@@ -385,40 +458,29 @@
       btn.disabled = true;
       btn.textContent = "Thinking...";
       bar.style.display = "block";
+      addTyping();
 
-      // Add an empty AI bubble to stream into
-      const win = document.getElementById("chat-window");
-      const div = document.createElement("div");
-      div.className = "msg ai";
-      div.innerHTML = `
-      <div class="msg-avatar">⚖️</div>
-      <div class="msg-bubble" id="stream-target"></div>
-    `;
-      win.appendChild(div);
-      win.scrollTop = win.scrollHeight;
+      console.log("typings added!");
 
       try {
-        const res = await fetch("/ask-stream", {
+        const res = await fetch("/ask", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ question: q })
         });
 
-        const reader = res.body.getReader();
-        const decoder = new TextDecoder();
-        const target = document.getElementById("stream-target");
-
-        while (true) {
-          const { done, value } = await reader.read();
-          if (done) break;
-          const text = decoder.decode(value, { stream: true });
-          target.innerHTML += text.replace(/\n/g, "<br/>");
-          win.scrollTop = win.scrollHeight;
+        if (!res.ok) {
+          throw new Error(`Server error in sendQuestion(): ${res.status}`);
         }
 
+        const data = await res.json();
+        removeTyping();
+        addMessage("ai", data.answer.replace(/\n/g, "<br/>"), data.sources || []);
+
       } catch (err) {
-        document.getElementById("stream-target").innerHTML =
-          "⚠️ Could not reach the local server. Make sure Ollama and the FastAPI server are running.";
+        removeTyping();
+        addMessage("ai", "⚠️ Could not reach the server. Make sure the FastAPI server is running.");
+        console.error(err);
       } finally {
         btn.disabled = false;
         btn.textContent = "Ask ➜";
@@ -426,7 +488,8 @@
         input.focus();
       }
     }
-</script>
+  </script>
 
 </body>
+
 </html>

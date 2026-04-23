@@ -1,9 +1,22 @@
-fastapi
-uvicorn
-langchain
-langchain-community
-langchain-chroma
-langchain-ollama
-chromadb
-pypdf
-sentence-transformers
+fastapi>=0.111.0
+uvicorn[standard]>=0.29.0
+pydantic>=2.0
+
+# LangChain core + integrations
+langchain-core>=1.3.0
+langchain-chroma>=0.1.0
+langchain-google-genai>=1.0.0
+langchain-community>=0.2.0
+
+# PDF loading
+pypdf>=4.0.0
+
+# Vector store
+chromadb>=0.5.0
+
+
+# Google AI SDK (pulled in by langchain-google-genai, listed explicitly for clarity)
+google-generativeai>=0.7.0
+
+# For server environment variables like: Google API keys
+python-dotenv>=1.0.0
