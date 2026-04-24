@@ -5,6 +5,10 @@ Just playing around with AI.  I'm using Ollama with Gemma2:2b model to run local
 
 I used VSCode to do this with the help of ClaudeAI.  Gemini in VSCode sucks, imo...
 
+## Update, Updated code >>>>
+As of April 23, 2026 this code has been updated to use supabase as the db (so use an earlier commit if you don't have a supabase db).
+Also, the code is not using Ollama anymore.  I'm using Gemini 2.5 from AI Studio.  I have a google cloud account, but created my Gemini API Key in Google AI Studio. <---
+## Update, Updated Code <<<<
 
 
 ## Installation
