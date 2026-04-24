@@ -1,5 +1,5 @@
 """
-ingest.py — Document ingestion with Gemini embeddings.
+ingest.py — Document ingestion into Supabase (pgvector) with Gemini embeddings.
 
 Usage:
     python ingest.py                  # ingest all .pdf and .txt files in ./data
@@ -7,7 +7,6 @@ Usage:
 
 Tracks ingested files by SHA-256 hash in ingested.json to avoid re-processing.
 A file is only re-ingested if its content has actually changed.
-CHROMA_DIR can be overridden via env var (e.g. a GCS FUSE mount point).
 """
 from dotenv import load_dotenv
 load_dotenv()
@@ -18,17 +17,17 @@ import sys
 import hashlib
 from pathlib import Path
 
+from supabase import create_client
 from langchain_community.document_loaders import PyPDFLoader, TextLoader
+from langchain_community.vectorstores import SupabaseVectorStore
 from langchain_text_splitters import RecursiveCharacterTextSplitter
-from langchain_chroma import Chroma
 from langchain_google_genai import GoogleGenerativeAIEmbeddings
 
 # ── Config ────────────────────────────────────────────────────────────────────
-DATA_DIR      = Path(os.environ.get("DATA_DIR",      "./data"))
-CHROMA_DIR    = os.environ.get("CHROMA_DIR",         "./db")
-TRACKER       = Path(os.environ.get("TRACKER",       "./data/ingested.json"))
-CHUNK_SIZE    = int(os.environ.get("CHUNK_SIZE",     "800"))
-CHUNK_OVERLAP = int(os.environ.get("CHUNK_OVERLAP",  "100"))
+DATA_DIR      = Path(os.environ.get("DATA_DIR",     "./data"))
+TRACKER       = Path(os.environ.get("TRACKER",      "./data/ingested.json"))
+CHUNK_SIZE    = int(os.environ.get("CHUNK_SIZE",    "800"))
+CHUNK_OVERLAP = int(os.environ.get("CHUNK_OVERLAP", "100"))
 
 SUPPORTED_EXTENSIONS = {".pdf", ".txt"}
 
@@ -66,9 +65,13 @@ def get_loader(path: Path):
 
 
 # ── Core ──────────────────────────────────────────────────────────────────────
-def ingest_file(file_path: Path, vectorstore: Chroma, tracker: dict) -> bool:
+def ingest_file(
+    file_path: Path,
+    vectorstore: SupabaseVectorStore,
+    tracker: dict,
+) -> bool:
     """
-    Ingest a single file into ChromaDB.
+    Ingest a single file into Supabase.
     Skips if the file hash matches what was previously ingested (no changes).
     Returns True if the file was ingested, False if skipped.
     """
@@ -100,10 +103,18 @@ def ingest_file(file_path: Path, vectorstore: Chroma, tracker: dict) -> bool:
 
 
 def main():
+    supabase = create_client(
+        os.environ["SUPABASE_URL"],
+        os.environ["SUPABASE_SERVICE_KEY"], #required the secret key
+    )
+
     embeddings = GoogleGenerativeAIEmbeddings(model="gemini-embedding-001")
-    vectorstore = Chroma(
-        persist_directory=CHROMA_DIR,
-        embedding_function=embeddings,
+
+    vectorstore = SupabaseVectorStore(
+        client=supabase,
+        embedding=embeddings,
+        table_name="documents",
+        query_name="match_documents",
     )
 
     tracker = load_tracker()

@@ -1,13 +1,30 @@
+from dotenv import load_dotenv
+load_dotenv()
+
 import os
-from langchain_chroma import Chroma
+from supabase import create_client
 from langchain_google_genai import ChatGoogleGenerativeAI, GoogleGenerativeAIEmbeddings
 from langchain_core.prompts import PromptTemplate
 from langchain_core.output_parsers import StrOutputParser
-from langchain_core.runnables import RunnablePassthrough, RunnableParallel
+from langchain_core.documents import Document
 
 # ── Config ───────────────────────────────────────────────────────────────────
-CHROMA_DIR = os.environ.get("CHROMA_DIR", "./db")
-GEMINI_MODEL = os.environ.get("GEMINI_MODEL", "gemini-2.5-flash")
+GEMINI_MODEL  = os.environ.get("GEMINI_MODEL", "gemini-2.5-flash")
+MATCH_COUNT   = int(os.environ.get("MATCH_COUNT", "4"))
+
+# ── Clients ───────────────────────────────────────────────────────────────────
+_supabase = create_client(
+    os.environ["SUPABASE_URL"],
+    os.environ["SUPABASE_SERVICE_KEY"],
+)
+
+_embeddings = GoogleGenerativeAIEmbeddings(model="gemini-embedding-001")
+
+_llm = ChatGoogleGenerativeAI(
+    model=GEMINI_MODEL,
+    temperature=0.2,
+    max_output_tokens=1024,
+)
 
 # ── Prompt ───────────────────────────────────────────────────────────────────
 PROMPT_TEMPLATE = """You are a helpful local legal and DIY assistant for Pierce County, WA.
@@ -21,56 +38,45 @@ Question: {question}
 
 Answer:"""
 
-prompt = PromptTemplate(
+_prompt = PromptTemplate(
     input_variables=["context", "question"],
     template=PROMPT_TEMPLATE,
 )
 
-# ── Singletons ────────────────────────────────────────────────────────────────
-_embeddings = GoogleGenerativeAIEmbeddings(model="gemini-embedding-001")
-_vectorstore = Chroma(persist_directory=CHROMA_DIR, embedding_function=_embeddings)
-_llm = ChatGoogleGenerativeAI(
-    model=GEMINI_MODEL,
-    temperature=0.2,
-    max_output_tokens=1024,
-)
-_retriever = _vectorstore.as_retriever(search_kwargs={"k": 4})
+_chain = _prompt | _llm | StrOutputParser()
 
 
-# ── Helpers ───────────────────────────────────────────────────────────────────
-def _format_docs(docs: list) -> str:
-    """Concatenate retrieved chunks into a single context string."""
-    return "\n\n".join(doc.page_content for doc in docs)
+# ── Retrieval (direct RPC — no SupabaseVectorStore) ──────────────────────────
+def _retrieve(question: str) -> list[Document]:
+    """
+    Embed the question and call the match_documents RPC directly.
+    Returns a list of LangChain Document objects.
+    """
+    vector = _embeddings.embed_query(question)
 
-
-# ── Pipeline ──────────────────────────────────────────────────────────────────
-#
-#  How it works, step by step:
-#
-#  1. RunnableParallel runs two branches simultaneously on the input question:
-#       - "context" branch: retriever fetches top-4 docs, _format_docs joins them
-#       - "question" branch: RunnablePassthrough just forwards the raw question
-#
-#  2. The result { "context": "...", "question": "..." } is passed to the prompt
-#
-#  3. The filled prompt goes to the LLM
-#
-#  4. StrOutputParser pulls the plain text string out of the LLM response object
-#
-_answer_chain = (
-    RunnableParallel(
-        context=_retriever | _format_docs,
-        question=RunnablePassthrough(),
+    response = (
+        _supabase
+        .rpc("match_documents", {
+            "query_embedding": vector,
+            "match_count": MATCH_COUNT,
+            "filter": {},
+        })
+        .execute()
     )
-    | prompt
-    | _llm
-    | StrOutputParser()
-)
 
-# Separate retriever call so we can return source metadata alongside the answer
+    docs = []
+    for row in response.data or []:
+        docs.append(Document(
+            page_content=row["content"],
+            metadata=row.get("metadata", {}),
+        ))
+    return docs
+
+
+# ── Query ─────────────────────────────────────────────────────────────────────
 def query(question: str) -> dict:
     """
-    Run a RAG query.
+    Run a RAG query against Supabase.
 
     Returns:
         {
@@ -78,18 +84,21 @@ def query(question: str) -> dict:
             "sources": [{"source": str, "page": int}, ...]
         }
     """
-    # Retrieve docs first so we have metadata for the sources list
-    docs = _retriever.invoke(question)
+    docs = _retrieve(question)
 
-    # Run the answer pipeline
-    answer = _answer_chain.invoke(question)
+    context = "\n\n".join(doc.page_content for doc in docs)
+
+    answer = _chain.invoke({
+        "context": context,
+        "question": question,
+    })
 
     sources = []
     for doc in docs:
         meta = doc.metadata
         sources.append({
             "source": meta.get("source", "unknown"),
-            "page": meta.get("page", 0),
+            "page":   meta.get("page", 0),
         })
 
     return {
