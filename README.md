@@ -8,9 +8,14 @@ I used VSCode to do this with the help of ClaudeAI.  Gemini in VSCode sucks, imo
 ## Update, Updated code >>>>
 As of April 23, 2026 this code has been updated to use supabase as the db (so use an earlier commit if you don't have a supabase db).
 Also, the code is not using Ollama anymore.  I'm using Gemini 2.5 from AI Studio.  I have a google cloud account, but created my Gemini API Key in Google AI Studio. <---
+
+April 24, 2026
+This is now running on Google Cloud Run.  It is running in a docker container.  ClaudeAI gave me the DockerFile and setup instructions.  I used Google CloudSDK CLI to setup via powershell.
+Here is the [chat interace](https://pierce-assistant-469343134497.us-west1.run.app).
 ## Update, Updated Code <<<<
 
-
+<br>&nbsp;</br>
+<br>&nbsp;</br>
 ## Installation
 First and foremost you'll need to download [Ollama](https://www.ollama.com/download).  It is a bundle of a GUI App and a system tray icon (a service).  They need to both be there.  Don't uninstall the GUI App, just close it.
 
