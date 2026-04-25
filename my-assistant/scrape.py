@@ -39,6 +39,7 @@ NAV_NOISE = {
     "what is allowed in a zone?",
 }
 
+
 # ── Playwright fetch ──────────────────────────────────────────────────────────
 with sync_playwright() as p:
     browser = p.chromium.launch(
@@ -62,6 +63,10 @@ with sync_playwright() as p:
 
 # ── Parse ─────────────────────────────────────────────────────────────────────
 soup = BeautifulSoup(html, "html.parser")
+
+# Strip left nav — works on piercecountywa.gov across all pages
+for tag in soup.select("#siteSidebarTS, nav#secondaryNav, .siteSidebar"):
+    tag.decompose()
 
 # Strip global chrome
 for tag in soup.select("header, footer, nav, script, style, .global-footer, .global-header, .breadcrumb, #top-nav"):

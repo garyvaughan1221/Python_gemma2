@@ -8,6 +8,7 @@
   <link
     href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Source+Sans+3:wght@300;400;600&display=swap"
     rel="stylesheet" />
+  <link rel="icon" type="image/png" href="favicon.ico">
   <style>
     *,
     *::before,
@@ -356,7 +357,7 @@
     <div class="header-icon">⚖️</div>
     <div class="header-text">
       <h1>Pierce County Legal &amp; DIY Assistant</h1>
-      <p>Powered by Gemini 2.5 Flash · Local RAG · Not legal advice</p>
+      <p>Powered by Gemini 2.5 Flash · RAG · Not legal advice</p>
     </div>
   </header>
 
@@ -374,8 +375,9 @@
       <button onclick="fillPrompt('What are the ADU rules in Pierce County?')">ADU rules</button>
       <button onclick="fillPrompt('Do I need a permit to build a deck?')">Deck permit?</button>
       <button onclick="fillPrompt('What are the noise ordinance hours?')">Noise ordinance</button>
-      <button onclick="fillPrompt('How long does a landlord have to return my deposit?')">Security deposit</button>
       <button onclick="fillPrompt('How tall can my fence be?')">Fence height</button>
+
+      <button onclick="fillPrompt('What are the short-term rental regulations?')">Short-term rentals</button>
     </div>
 
     <div class="input-row">
@@ -387,7 +389,7 @@
     </div>
   </main>
 
-  <footer>Running locally · Gemini 2.5 Flash · Pierce County + WA State data</footer>
+  <footer>Running Gemini 2.5 Flash · Pierce County + WA State data</footer>
 
   <script>
     function handleKey(e) {
