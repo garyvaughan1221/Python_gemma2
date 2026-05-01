@@ -14,17 +14,11 @@ WORKDIR /app
 # Copy installed packages from builder
 COPY --from=builder /install /usr/local
 
-# Copy application code
-COPY chat.py server.py ingest.py ./
+# Copy application package
+COPY app/ ./app/
 
 # Copy static frontend
 COPY public/ ./public/
-
-# ChromaDB persistence directory
-# In Cloud Run, mount a GCS bucket here via Volume Mounts (Cloud Run v2)
-# or pre-populate during image build for read-only deployments.
-ENV CHROMA_DIR=/app/db
-RUN mkdir -p /app/db
 
 # Cloud Run injects PORT; default to 8080
 ENV PORT=8080
@@ -34,4 +28,4 @@ ENV PORT=8080
 
 EXPOSE 8080
 
-CMD ["sh", "-c", "uvicorn server:app --host 0.0.0.0 --port $PORT"]
+CMD ["sh", "-c", "uvicorn app.server:app --host 0.0.0.0 --port $PORT"]

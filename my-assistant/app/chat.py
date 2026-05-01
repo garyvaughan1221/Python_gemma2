@@ -28,11 +28,9 @@ _llm = ChatGoogleGenerativeAI(
 
 # ── Prompt ───────────────────────────────────────────────────────────────────
 PROMPT_TEMPLATE = """You are a helpful local legal and DIY assistant for Pierce County, WA.
-Use only the context below to answer. If the answer isn't in the context, say so clearly
-rather than guessing. Keep answers practical and plain-language.
+Use only the context below to answer. If the answer isn't in the context, say so clearly rather than guessing. Keep answers practical and plain-language.
 
-If the context contains URLs relevant to the answer, include them at the end of your
-response under a "Sources:" section. Only include URLs that actually appear in the context —
+If the context contains URLs relevant to the answer, include them at the end of your response under a "Sources:" section. Only include URLs that actually appear in the context —
 do not invent or guess at links.
 
 Context:
@@ -69,7 +67,7 @@ def _retrieve(question: str) -> list[Document]:
     )
 
     docs = []
-    for row in response.data or []:
+    for row in response.data or []: # type: ignore
         docs.append(Document(
             page_content=row["content"],
             metadata=row.get("metadata", {}),
@@ -97,12 +95,30 @@ def query(question: str) -> dict:
         "question": question,
     })
 
+    # Convert any bare URLs in the answer to HTML hyperlinks
+    import re
+    def make_link(m):
+        url = m.group(1)
+        label = url.rstrip('/').split('/')[-1] or url
+        return f'<a href="{url}" target="_blank">{label}</a>'
+
+    answer = re.sub(r'(https?://[^\s\)<>"]+)', make_link, answer)
+
     sources = []
     for doc in docs:
         meta = doc.metadata
+        source = meta.get("source", "unknown")
+        page = meta.get("page", 0)
+
+        # If source is a URL, render it as an HTML hyperlink
+        if source.startswith("http://") or source.startswith("https://"):
+            display = f'<a href="{source}" target="_blank">{source}</a>'
+        else:
+            display = source
+
         sources.append({
-            "source": meta.get("source", "unknown"),
-            "page":   meta.get("page", 0),
+            "source": display,
+            "page": page,
         })
 
     return {

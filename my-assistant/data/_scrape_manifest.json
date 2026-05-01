@@ -4,5 +4,11 @@
     "output_file": "data/What-Is-Allowed-in-a-Zone.txt",
     "url": "https://www.piercecountywa.gov/971/What-Is-Allowed-in-a-Zone",
     "status": "success"
+  },
+  {
+    "datetime": "2026-04-29T17:34:21.716447",
+    "output_file": "data/Chapter_18A.37_ACCESSORY_DEVELOPMENT_RESIDENTIAL.txt",
+    "url": "https://pierce.county.codes/PCC/18A.37",
+    "status": "success"
   }
 ]

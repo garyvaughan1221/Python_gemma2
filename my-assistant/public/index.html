@@ -412,7 +412,11 @@
       // Build sources strip if present
       let sourcesHtml = "";
       if (sources.length > 0) {
-        const unique = [...new Set(sources.map(s => `${s.source} (p.${s.page + 1})`))];
+        const unique = [...new Set(sources.map(s => {
+          const isHtml = s.source.startsWith('<a ');
+          return isHtml ? s.source : `${s.source} (p.${s.page + 1})`;
+        }))];
+
         sourcesHtml = `<div class="sources">📄 Sources: ${unique.join(" · ")}</div>`;
       }
 
@@ -462,8 +466,6 @@
       bar.style.display = "block";
       addTyping();
 
-      console.log("typings added!");
-
       try {
         const res = await fetch("/ask", {
           method: "POST",
@@ -478,6 +480,7 @@
         const data = await res.json();
         removeTyping();
         addMessage("ai", data.answer.replace(/\n/g, "<br/>"), data.sources || []);
+        console.log("response received:", data);
 
       } catch (err) {
         removeTyping();

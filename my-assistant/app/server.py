@@ -8,7 +8,7 @@ from fastapi.responses import FileResponse, RedirectResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 
-from chat import query
+from app.chat import query
 
 # ── App ───────────────────────────────────────────────────────────────────────
 app = FastAPI(title="Pierce County AI Assistant")
@@ -22,7 +22,7 @@ app.add_middleware(
 )
 
 # Serve static files (index.html + any assets) from /public
-PUBLIC_DIR = os.path.join(os.path.dirname(__file__), "public")
+PUBLIC_DIR = os.path.join(os.path.dirname(__file__), "../public")
 if os.path.isdir(PUBLIC_DIR):
     app.mount("/public", StaticFiles(directory=PUBLIC_DIR), name="static")
 

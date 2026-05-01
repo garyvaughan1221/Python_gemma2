@@ -9,9 +9,9 @@ from scrape_manifest_json import log_scrape
 import copy
 import re
 
-url = "https://www.piercecountywa.gov/971/What-Is-Allowed-in-a-Zone"
+url = "https://pierce.county.codes/PCC/18A.37"
 base_url = "https://www.piercecountywa.gov"
-stem = "What-Is-Allowed-in-a-Zone"
+stem = "Chapter_18A.37_ACCESSORY_DEVELOPMENT_RESIDENTIAL"
 output_file = f"data/{stem}.txt"
 
 os.makedirs("data", exist_ok=True)
@@ -166,7 +166,7 @@ def extract_clean_text(element, base_url, nav_noise):
 
 # ── Build output ──────────────────────────────────────────────────────────────
 header = (
-    f"SOURCE: Pierce County — What Is Allowed in a Zone?\n"
+    f"SOURCE: Chapter_18A.37_ACCESSORY_DEVELOPMENT_RESIDENTIAL?\n"
     f"URL: {url}\n"
     f"{'─' * 70}\n"
 )
